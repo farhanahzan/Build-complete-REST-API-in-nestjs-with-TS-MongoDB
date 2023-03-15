@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
 import { Book } from './schemas/book.schema';
 import { Query } from 'express-serve-static-core';
+import { BadRequestException } from '@nestjs/common/exceptions';
 
 @Injectable()
 export class BookService {
@@ -61,8 +62,14 @@ export class BookService {
   }
 
   async findById(_id: string): Promise<Book> {
-    const book = await this.bookModel.findById(_id);
 
+    const isValidId = mongoose.isValidObjectId(_id)
+    if(!isValidId){
+      throw new BadRequestException('Please enter Correct Id')
+    }
+
+
+    const book = await this.bookModel.findById(_id);
     if (!book) {
       throw new NotFoundException('Book Not Found');
     }
