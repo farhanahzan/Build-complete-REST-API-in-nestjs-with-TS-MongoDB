@@ -4,14 +4,14 @@ import { BookService } from './book.service';
 import {  CreateBookDto } from './dto/create-book.dto';
 import { updateBookDto } from './dto/update-book.dto';
 import { Book } from './schemas/book.schema';
-
+import {Query as ExpressQuery} from 'express-serve-static-core'
 @Controller('book')
 export class BookController {
   constructor(private bookService: BookService) {}
 
   @Get()
-  async getAllBooks(@Query('title') title?: string): Promise<Book[]> {
-    return this.bookService.findAll(title);
+  async getAllBooks(@Query() query?: ExpressQuery): Promise<Book[]> {
+    return this.bookService.findAll(query);
   }
 
   @Post()
