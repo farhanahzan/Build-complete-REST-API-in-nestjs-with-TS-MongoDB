@@ -12,10 +12,10 @@ export class AuthService {
   constructor(
     @InjectModel(User.name)
     private userModel: mongoose.Model<User>,
-    private jwtService:JwtService
+    private jwtService: JwtService,
   ) {}
 
-  async signUp(signUpDto: SignUpDto):Promise<{token:string}> {
+  async signUp(signUpDto: SignUpDto): Promise<{ token: string }> {
     const { name, email, password } = signUpDto;
 
     const hashedPassword = await bcrypt.hash(password, 10);
@@ -26,30 +26,30 @@ export class AuthService {
       password: hashedPassword,
     });
 
-    const token = this.jwtService.sign({id:user._id})
+    const token = this.jwtService.sign({ id: user._id });
 
-    return {token}
+    return { token };
   }
 
-  async login(loginDto:LoginDto):Promise<{token:string}>{
-    const {email, password} = loginDto
+  async login(loginDto: LoginDto): Promise<{ token: string }> {
+    const { email, password } = loginDto;
 
-    const user = await this.userModel.findOne({email})
+    const user = await this.userModel.findOne({ email });
 
-    if(!user){
-        throw new UnauthorizedException('Invalid email or passwprd')
+    if (!user) {
+      throw new UnauthorizedException('Invalid email or passwprd');
     }
 
-    const isMatchedPassword = await bcrypt.compare(password, user.password)
+    const isMatchedPassword = await bcrypt.compare(password, user.password);
 
-    if(!isMatchedPassword){
-        throw new UnauthorizedException('Invalid Email or Password')
+    if (!isMatchedPassword) {
+      throw new UnauthorizedException('Invalid Email or Password');
     }
 
-    const token = this.jwtService.sign({id: user._id})
+    const token = this.jwtService.sign({ id: user._id });
 
-    return {token}
-
-
+    return { token };
   }
+
+  
 }

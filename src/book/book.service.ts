@@ -4,6 +4,7 @@ import * as mongoose from 'mongoose';
 import { Book } from './schemas/book.schema';
 import { Query } from 'express-serve-static-core';
 import { BadRequestException } from '@nestjs/common/exceptions';
+import { User } from '../auth/schemas/user.schema';
 
 @Injectable()
 export class BookService {
@@ -14,7 +15,7 @@ export class BookService {
 
   async findAll(query: Query): Promise<Book[]> {
 
-    const resPerPage =2
+    const resPerPage =10
     const currentPage = Number(query.page) || 1
     const skip = resPerPage * (currentPage-1)
     const keyword = query.keyword
@@ -56,8 +57,10 @@ export class BookService {
     return books;
   }
 
-  async createBook(book: Book): Promise<Book> {
-    const res = await this.bookModel.create(book);
+  async createBook(book: Book, user:User): Promise<Book> {
+
+    const data = Object.assign(book, {user:user._id})
+    const res = await this.bookModel.create(data);
     return res;
   }
 
